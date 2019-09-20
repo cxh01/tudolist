@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .home {
+            width: 1200px;
+            height: 850px;
+            margin: 10px auto;
+            text-align: center;
+            border: 2px solid #000;
+        }
+
+        .formhead {
+            width: 100%;
+            height: 21px;
+            border-bottom: 2px solid #000;
+        }
+
+        .formhead li {
+            list-style-type: none;
+            float: left;
+        }
+
+        .serialName {
+            display: none;
+            width: 10%;
+        }
+
+        .thingName {
+            width: 60%;
+        }
+
+        .timeName {
+            width: 30%;
+        }
+
+        .clear {
+            width: 10%;
+        }
+
+        .clear button {
+            float: left;
+            width: 100%;
+            height: 21px;
+            background-color: transparent;
+            outline: none;
+            border: none;
+            border-left: 2px solid #000;
+            border-top: 2px solid #000;
+        }
+        .clear button:hover{
+            color: #fff;
+            background-color: #000;
+            transition: 0.5s all;
+        }
+
+        .input {
+            width: 1200px;
+            height: 30px;
+            margin: 0 auto;
+        }
+
+        .input input {
+            width: 40%;
+            height: 30px;
+            outline: none;
+            border: 2px solid rgb(121, 121, 121);
+            padding-left: 20px;
+            box-sizing: border-box;
+        }
+
+        .input button {
+            width: 15%;
+            height: 34px;
+            background-color: #fff;
+            color: #000;
+            outline: none;
+            border: 2px solid #000;
+        }
+
+        .input button:hover {
+            background-color: #000;
+            color: #fff;
+            border: 2px solid #fff;
+            transition: 0.5s all;
+        }
+
+        .show ul {
+            width: 100%;
+            height: 100%;
+            margin-top: 5px;
+        }
+
+        .show li {
+            list-style-type: none;
+            width: 100%;
+        }
+
+        .show li p {
+            float: left;
+        }
+
+        .formSerial {
+            display: none;
+            width: 10%;
+        }
+
+        .formThing {
+            width: 60%;
+        }
+
+        .formTime {
+            width: 30%;
+        }
+
+        .formDelete {
+            width: 10%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="home">
+        <h1>代办事件</h1>
+        <ul class="formhead">
+            <li class="serialName">序号</li>
+            <li class="thingName">事情</li>
+            <li class="timeName">时间</li>
+            <li class="clear"><button id="clearbutton">一键清除</button></li>
+        </ul>
+        <ul class="show" id="show">
+        </ul>
+
+    </div>
+    <div class="input">
+        <input type="text" id="thinginput">
+        <input type="text" id="timeinput">
+        <button id="button">确认</button>
+    </div>
+    <script>
+
+        var thingInput = document.getElementById("thinginput");
+
+
+
+        var timeInput = document.getElementById("timeinput");
+
+        var confirmButton = document.getElementById("button");
+
+        var mainPageUl = document.getElementById("show");
+
+        var eventStorageArray = []
+
+        eventStorageArray = JSON.parse(localStorage.getItem("temp")) || [];
+
+        for (var i = 0; i < eventStorageArray.length; i++) {
+
+            show(i + 1, eventStorageArray[i].thing, eventStorageArray[i].time)
+
+            deleteA()
+
+            modifyThing()
+
+            modifyTime()
+
+        };
+
+        //添加方法
+
+        function show(serialText, thingText, timeText) {
+
+            //创建ul父节点
+
+            var newUl = document.createElement("li");
+
+            newUl.classList.add("form")
+
+            //创建序号子节点
+
+            var serialLi = document.createElement("p");
+
+            var serial = document.createTextNode(serialText);
+
+            serialLi.appendChild(serial);
+
+            serialLi.classList.add("formSerial")
+
+
+            //创建事件子节点
+
+            var thingLi = document.createElement("p");
+
+            thingLi.classList.add("formThing")
+
+            var thing = document.createTextNode(thingText);
+
+            thingLi.appendChild(thing);
+
+            //创建时间子节点
+
+            var timeLi = document.createElement("p");
+
+            timeLi.classList.add("formTime")
+
+            var time = document.createTextNode(timeText);
+
+            timeLi.appendChild(time);
+
+            //创建删除子节点
+
+            var deleteLi = document.createElement("p");
+
+            deleteLi.classList.add("formDelete");
+
+            var deleteA = document.createElement("a");
+
+            deleteA.classList.add("formDeleteA");
+
+            deleteA.href = "javascript:;";
+
+            deleteA.innerHTML = "删除";
+
+            deleteLi.appendChild(deleteA);
+
+            //appendChild
+
+            newUl.appendChild(serialLi);
+
+            newUl.appendChild(thingLi);
+
+            newUl.appendChild(timeLi);
+
+            newUl.appendChild(deleteLi);
+
+            mainPageUl.appendChild(newUl);
+        }
+
+
+
+        //序号方法
+
+        function forSerial() {
+
+            return eventStorageArray.length;
+
+        }
+
+        //删除按钮方法
+
+        function deleteA() {
+            var deleteA = document.getElementsByClassName("formDeleteA");
+
+            for (var i = 0; i < deleteA.length; i++) {
+
+                deleteA[i].onclick = function (n) {
+
+                    return function () {
+
+                        var index = this.parentNode.parentNode.children[0].innerText;
+
+                        eventStorageArray.splice(index - 1, 1);
+
+                        mainPageUl.removeChild(this.parentNode.parentNode);
+
+                        var serialLi = document.getElementsByClassName("formSerial");
+
+                        for (var t = 0; t < eventStorageArray.length; t++) {
+
+                            serialLi[t].innerText = t + 1;
+
+                        }
+
+                        keep()
+                    };
+
+
+                }(i)
+
+            }
+        }
+
+        //事件修改方法
+
+        function modifyThing() {
+            var modifyThing = document.getElementsByClassName("formThing")
+
+            for (var i = 0; i < modifyThing.length; i++) {
+
+                modifyThing[i].onclick = function (n) {
+
+                    return function () {
+
+                        var index = this.parentNode.children[0].innerText;
+
+                        var newText = prompt("请修改序号为:" + index + " 的内容");
+
+                        modifyThing[index - 1].innerText = newText;
+
+                        eventStorageArray[index - 1].thing = newText;
+
+                        keep()
+                    };
+
+                }(i)
+
+            }
+        }
+
+        //时间修改方法
+
+        function modifyTime() {
+
+            var modifyTime = document.getElementsByClassName("formTime")
+
+            for (var i = 0; i < modifyTime.length; i++) {
+
+                modifyTime[i].onclick = function (n) {
+
+                    return function () {
+
+                        var index = this.parentNode.children[0].innerText;
+
+                        var newText = prompt("请修改序号为:" + index + " 的内容");
+
+                        modifyTime[index - 1].innerText = newText;
+
+                        eventStorageArray[index - 1].time = newText;
+
+                        keep()
+                    };
+
+                }(i)
+
+            }
+        }
+        //数据储存方法
+        function keep() {
+            localStorage.setItem("temp", JSON.stringify(eventStorageArray));
+        }
+
+        //一键清除
+
+        var clearButton = document.getElementById("clearbutton");
+
+        clearButton.onclick = function () {
+
+            if (eventStorageArray.length == 0) {
+
+                alert("当前无代办事项,无需清空");
+
+                return;
+
+            } else {
+
+                if(!confirm("你确认要清空吗?")){
+                    return
+                }
+                
+
+                eventStorageArray.length = 0;
+
+                keep()
+
+                mainPageUl.innerHTML = "";
+            }
+
+        }
+
+
+
+
+        //输入排序
+        function sortDownDate(a, b) {
+            return Date.parse(a.time) - Date.parse(b.time);
+        }
+
+
+        //绑定事件
+        confirmButton.onclick = function () {
+
+            var thingtext = thingInput.value
+
+            if (thingtext.length == 0) {
+
+                alert("请输入有效的事情,无法输入为空");
+
+                return;
+            }
+
+            var timetext = timeInput.value
+
+            if (timetext.length == 0) {
+
+                alert("代办时间为空,请输入有效时间");
+
+                return;
+            }
+
+
+            obj = {
+
+                thing: thingInput.value,
+
+                time: timeInput.value
+            };
+
+            eventStorageArray.push(obj);
+
+            eventStorageArray.sort(sortDownDate);
+
+            console.log(eventStorageArray);
+
+            mainPageUl.innerHTML = "";
+            
+            for (var i = 0; i < eventStorageArray.length; i++) {
+
+                show(forSerial(), eventStorageArray[i].thing, eventStorageArray[i].time);
+
+            }
+
+            deleteA()
+
+            modifyThing()
+
+            modifyTime()
+
+            keep()
+
+        }
+
+    </script>
+</body>
+
+</html>
